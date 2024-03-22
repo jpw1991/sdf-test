@@ -1,0 +1,100 @@
+[gd_scene load_steps=9 format=3 uid="uid://drok3s7ysucbg"]
+
+[ext_resource type="Shader" path="res://Voxel/smooth_texture_array_shader.gdshader" id="1_oiqgg"]
+[ext_resource type="CompressedTexture2DArray" uid="uid://bmkrs5vpl1qjg" path="res://Voxel/texture_array.png" id="2_ebnmn"]
+[ext_resource type="Script" path="res://mover.gd" id="3_ouby3"]
+
+[sub_resource type="ZN_FastNoiseLite" id="ZN_FastNoiseLite_qnvac"]
+
+[sub_resource type="VoxelGeneratorGraph" id="VoxelGeneratorGraph_71sxy"]
+graph_data = {
+"connections": [[14, 0, 12, 0], [13, 0, 14, 2], [11, 0, 10, 0], [10, 0, 4, 0], [9, 0, 10, 1], [6, 0, 11, 0]],
+"nodes": {
+"10": {
+"gui_position": Vector2(640, 140),
+"type": "Add"
+},
+"11": {
+"b": 15.0,
+"gui_position": Vector2(440, 60),
+"type": "Multiply"
+},
+"12": {
+"gui_position": Vector2(840, 320),
+"type": "OutputSingleTexture"
+},
+"13": {
+"gui_position": Vector2(483.153, 386.523),
+"type": "InputY"
+},
+"14": {
+"a": 1.0,
+"b": 2.0,
+"gui_position": Vector2(580, 280),
+"threshold": 5.0,
+"type": "Select"
+},
+"4": {
+"auto_connect": true,
+"gui_position": Vector2(840, 140),
+"type": "OutputSDF"
+},
+"6": {
+"auto_connect": true,
+"gui_position": Vector2(180, 100),
+"noise": SubResource("ZN_FastNoiseLite_qnvac"),
+"type": "FastNoise2D",
+"x": 0.0,
+"y": 0.0
+},
+"9": {
+"auto_connect": true,
+"gui_position": Vector2(180, 300),
+"height": 0.0,
+"type": "SdfPlane",
+"y": 0.0
+}
+},
+"version": 2
+}
+
+[sub_resource type="VoxelMesherTransvoxel" id="VoxelMesherTransvoxel_u82e8"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_1qgia"]
+render_priority = 0
+shader = ExtResource("1_oiqgg")
+shader_parameter/u_transition_mask = null
+shader_parameter/u_albedo_array = ExtResource("2_ebnmn")
+
+[sub_resource type="BoxMesh" id="BoxMesh_0j2xj"]
+
+[node name="Node3D" type="Node3D"]
+
+[node name="VoxelLodTerrain" type="VoxelLodTerrain" parent="."]
+generator = SubResource("VoxelGeneratorGraph_71sxy")
+mesher = SubResource("VoxelMesherTransvoxel_u82e8")
+material = SubResource("ShaderMaterial_1qgia")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2, 3)
+mesh = SubResource("BoxMesh_0j2xj")
+skeleton = NodePath("")
+script = ExtResource("3_ouby3")
+
+[node name="Camera3D" type="Camera3D" parent="MeshInstance3D"]
+
+[node name="Label" type="Label" parent="MeshInstance3D/Camera3D"]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -124.5
+offset_top = -52.5
+offset_right = 124.5
+offset_bottom = 52.5
+grow_horizontal = 2
+grow_vertical = 2
+text = "sdf = "
